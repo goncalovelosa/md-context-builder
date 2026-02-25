@@ -36,18 +36,19 @@ Run `/memory` command to see what memory files are loaded.
 
 ```markdown
 CLAUDE.md (root)
-├── High-level overview
-├── Essential commands
+├── Package manager (IMPORTANT)
+├── Common workflows (procedural)
+├── Non-obvious knowledge
 └── Links to detailed docs
 
 .claude/docs/architecture.md
-├── System design
-├── Data flow
-└── Integration points
+├── System design decisions
+├── Non-obvious integration patterns
+└── Failure recovery procedures
 
 .claude/docs/development.md
-├── Setup instructions
-├── Testing workflow
+├── Setup instructions (step-by-step)
+├── Testing workflow (procedural)
 └── Debugging guide
 ```
 

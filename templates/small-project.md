@@ -2,91 +2,54 @@
 
 <!-- CLAUDE.md Last Updated: [DATE: e.g., 2026-02-10T22:00:00Z] -->
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
-## Project Overview
-
-[One-line description of what this project does]
-
-## Recent Activity
-
-*Only include this section if the repository is a git repo with >20 commits and recent activity*
-
-**Since [last update date or "30 days ago"]:**
-- `path/to/file` - Brief description (N commits)
-- `path/to/file` - Brief description (N commits)
-
-## Tech Stack
-
-- [Framework name] [Version]
-- [Language] [Version]
-- [Additional tool if critical]
+[One-line description - what this project does]
 
 ## Package Manager
 
 **IMPORTANT:** Uses [yarn/npm/pnpm] (not [other package managers])
 
-## Essential Commands
+## Common Workflows
 
-- `[command]` - [what it does]
-- `[command]` - [what it does]
-- `[command]` - [what it does]
-- `[command]` - [what it does]
+### Building & Running
 
-## Entry Point
+1. `[install command]` - Install dependencies
+2. `[dev command]` - Start development server
+3. `[build command]` - Build for production
+4. `[test command]` - Run tests
 
-- `[path]` - [purpose]
+### [Project-Specific Workflow - e.g., Adding an API Endpoint]
+
+1. [Step 1]
+2. [Step 2]
+3. [Step 3]
 
 ## Key Files
 
-- `[path]` - [purpose]
-- `[path]` - [purpose]
-- `[path]` - [purpose]
-- `[path]` - [purpose]
+- `@path/to/entry` - [purpose]
+- `@path/to/config` - [purpose]
+- `@path/to/key/module` - [purpose]
+
+## Non-Obvious Knowledge
+
+<!-- CRITICAL: Capture tribal knowledge Claude can't infer -->
+<!-- Example: "Rate limiting at 100 req/min is intentional - not a bug" -->
+<!-- Example: "User IDs are immutable by design - never add mutation endpoint" -->
+
+- [Tribal knowledge 1]
+- [Tribal knowledge 2]
 
 ## Do Not
 
-- [Critical rule 1 - e.g., "Do not edit dist/ (auto-generated)"]
-- [Critical rule 2]
+- [Critical rule 1 - e.g., "Use `pnpm` exclusively"]
+- [Critical rule 2 - e.g., "Preserve tmp/ folder for build caching"]
 - [Critical rule 3]
 
+## Learned Lessons
+
+<!-- Add entries when Claude makes mistakes -->
+<!-- 2026-02-15: Claude deleted migration files → Added rule: "Never delete files in migrations/" -->
+
 ## Verification
 
-Add project-specific verification:
-
-```markdown
-## Verification
-
-- Run `npm test` after code changes
-- Run `npm run build` before marking complete
-```
-
-This improves final quality 2-3x by giving Claude a way to verify its work.
-
-## Auto-Format Hook (Recommended)
-
-Prevent format drift by adding a PostToolUse hook to your Claude Code settings:
-
-```json
-{
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "npm run format || true"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-The `|| true` pattern prevents format errors from blocking the session.
-
-## Workflow
-
-For complex tasks: Start in Plan mode, iterate on plan, then implement.
+- Run `[test command]` after code changes
+- Run `[build command]` before marking complete
