@@ -2,39 +2,7 @@
 
 <!-- CLAUDE.md Last Updated: [DATE: e.g., 2026-02-10T22:00:00Z] -->
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
-## Project Overview
-
-[One-line description of this monorepo/project]
-
-## Development Focus
-
-*Only include this section if the repository is a git repo with >100 commits*
-
-**Active Development** (since [last update date or "30 days ago"]):
-- `path/to/` - Brief description
-- `path/to/` - Brief description
-
-**Historical Hotspots** (all-time most changed):
-- `path/to/file` - N changes total
-- `path/to/file` - N changes total
-
-**File Coupling** (frequently changed together):
-- `file1.ts` + `file2.ts`
-- `file3.ts` + `file4.ts`
-
-*See `@.claude/docs/git-insights.md` for detailed commit history analysis.*
-
-## Tech Stack
-
-- [Framework 1] [Version]
-- [Framework 2] [Version]
-- [Language] [Version]
-- [Key library 1]
-- [Key library 2]
-- [Key library 3]
-- [Build tool] [Version]
+[One-line description - what this monorepo contains]
 
 ## Package Manager
 
@@ -44,118 +12,82 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **[Nx/Turborepo/Lerna]** - Configured at `[config path]`
 
-## Essential Commands
+## Common Workflows
 
-- `[command]` - [what it does]
-- `[command]` - [what it does]
-- `[command]` - [what it does]
-- `[command]` - [what it does]
-- `[command]` - [what it does]
-- `[command]` - [what it does]
+### Building & Running
 
-## Entry Points
+1. `[install command]` - Install all dependencies
+2. `[dev command]` - Start development server(s)
+3. `[build command]` - Build all packages
+4. `[test command]` - Run all tests
+5. `[affected:test]` - Test only affected packages (faster)
 
-- `[path]` - [purpose]
-- `[path]` - [purpose]
-- `[path]` - [purpose]
+### [Workflow 1 - e.g., Adding a New Package]
 
-## Key Directories
+1. [Step 1 - e.g., Run `nx g @nx/lib:my-lib`]
+2. [Step 2 - e.g., Add to appropriate tsconfig paths]
+3. [Step 3 - e.g., Update workspace config]
 
-- `[dir]/` - [purpose]
-- `[dir]/` - [purpose]
-- `[dir]/` - [purpose]
-- `[dir]/` - [purpose]
-- `[dir]/` - [purpose]
+### [Workflow 2 - e.g., Working on a Specific App]
 
-## Repository Structure
+1. [Step 1 - e.g., `nx serve app-name`]
+2. [Step 2]
+3. [Step 3]
 
-```
-[project-name]/
-├── [dir]/           # [purpose]
-├── [dir]/           # [purpose]
-├── [dir]/           # [purpose]
-├── packages/        # [Workspace packages]
-│   ├── [pkg1]/      # [purpose]
-│   ├── [pkg2]/      # [purpose]
-│   └── [pkg3]/      # [purpose]
-└── apps/            # [Applications]
-    ├── [app1]/      # [purpose]
-    └── [app2]/      # [purpose]
-```
+### Cross-Package Changes
 
-## Workspace Packages
+1. Make changes in dependency package
+2. Run `[build command]` for that package
+3. Test dependent packages with `[test command]`
+4. Update version only after all tests pass
 
-| Package | Location          | Purpose   |
-| ------- | ----------------- | --------- |
-| [name]  | `packages/[name]` | [purpose] |
-| [name]  | `packages/[name]` | [purpose] |
-| [name]  | `apps/[name]`     | [purpose] |
+## Key Packages
+
+| Package | Location          | Purpose             |
+| ------- | ----------------- | ------------------- |
+| [core]  | `packages/[core]` | [shared utilities]  |
+| [ui]    | `packages/[ui]`   | [component library] |
+| [app]   | `apps/[app]`      | [main application]  |
 
 ## Key Files
 
-- `[path]` - [purpose]
-- `[path]` - [purpose]
-- `[path]` - [purpose]
-- `[path]` - [purpose]
-- `[path]` - [purpose]
-- `[path]` - [purpose]
+- `@path/to/root/config` - [monorepo configuration]
+- `@path/to/workspace/config` - [workspace settings]
+- `@path/to/shared/module` - [shared utilities]
+
+## Non-Obvious Knowledge
+
+<!-- CRITICAL: Capture tribal knowledge Claude can't infer -->
+<!-- Example: "Package A must be built before Package B" -->
+<!-- Example: "The 'legacy' folder is intentionally deprecated" -->
+<!-- Example: "Feature flags control rollouts, not feature branches" -->
+
+- [Tribal knowledge 1]
+- [Tribal knowledge 2]
+- [Tribal knowledge 3]
+- [Tribal knowledge 4]
 
 ## Do Not
 
-- [Critical rule 1]
-- [Critical rule 2]
-- [Critical rule 3]
-- [Critical rule 4]
+- [Critical rule 1 - e.g., "Use `pnpm` exclusively"]
+- [Critical rule 2 - e.g., "Build packages in dependency order"]
+- [Critical rule 3 - e.g., "Never skip `affected:test` before pushing"]
+- [Critical rule 4 - e.g., "Preserve tmp/ folder for build caching"]
 - [Critical rule 5]
 - [Critical rule 6]
 
+## Learned Lessons
+
+<!-- Add entries when Claude makes mistakes -->
+<!-- 2026-02-15: Claude built packages in wrong order → Added explicit dependency order rule -->
+
 ## Verification
 
-Add project-specific verification:
+- Run `[affected:test]` after code changes
+- Run `[build command]` before marking complete
 
-```markdown
-## Verification
+## Progressive Disclosure
 
-- Run `npm test` after code changes
-- Run `npm run build` before marking complete
-- Run `npm run lint` to check code quality
-- Run `npm run typecheck` for TypeScript projects
-```
-
-This improves final quality 2-3x by giving Claude a way to verify its work.
-
-## Auto-Format Hook (Recommended)
-
-Prevent format drift by adding a PostToolUse hook to your Claude Code settings:
-
-```json
-{
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "npm run format || true"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-The `|| true` pattern prevents format errors from blocking the session.
-
-## Workflow
-
-For complex tasks: Start in Plan mode, iterate on plan, then implement.
-
-## Additional Context
-
-- Architecture details: `.claude/docs/architecture.md`
-- Development guide: `.claude/docs/development.md`
-- Service documentation: `.claude/docs/services/`
-- File inventory: `.claude/docs/general_index.md`
-- Detailed index: `.claude/docs/detailed_index.md`
+- Architecture: @.claude/docs/architecture.md
+- Development: @.claude/docs/development.md
+- Services: @.claude/docs/services/

@@ -2,112 +2,68 @@
 
 <!-- CLAUDE.md Last Updated: [DATE: e.g., 2026-02-10T22:00:00Z] -->
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
-## Project Overview
-
-[One-line description of what this project does]
-
-## Recent Activity
-
-*Only include this section if the repository is a git repo with >20 commits and recent activity*
-
-**Since [last update date or "30 days ago"]:**
-- `path/to/file` - Brief description (N commits)
-- `path/to/file` - Brief description (N commits)
-
-**Historical hotspots** (most changed files):
-- `path/to/file` - N changes total
-- `path/to/file` - N changes total
-
-## Tech Stack
-
-- [Framework name] [Version]
-- [Language] [Version]
-- [Key library 1]
-- [Key library 2]
+[One-line description - what this project does]
 
 ## Package Manager
 
 **IMPORTANT:** Uses [yarn/npm/pnpm] (not [other package managers])
 
-## Essential Commands
+## Common Workflows
 
-- `[command]` - [what it does]
-- `[command]` - [what it does]
-- `[command]` - [what it does]
-- `[command]` - [what it does]
-- `[command]` - [what it does]
+### Building & Running
 
-## Entry Points
+1. `[install command]` - Install dependencies
+2. `[dev command]` - Start development server
+3. `[build command]` - Build for production
+4. `[test command]` - Run tests
 
-- `[path]` - [purpose]
-- `[path]` - [purpose]
+### [Project-Specific Workflow - e.g., Adding a Feature]
 
-## Key Directories
+1. [Step 1 - e.g., Create component in src/components/]
+2. [Step 2 - e.g., Add tests in **tests**/]
+3. [Step 3 - e.g., Update exports in index.ts]
 
-- `[dir]/` - [purpose]
-- `[dir]/` - [purpose]
-- `[dir]/` - [purpose]
+### [Another Workflow - e.g., Database Migrations]
+
+1. [Step 1]
+2. [Step 2]
+3. [Step 3]
 
 ## Key Files
 
-- `[path]` - [purpose]
-- `[path]` - [purpose]
-- `[path]` - [purpose]
-- `[path]` - [purpose]
-- `[path]` - [purpose]
+- `@path/to/entry` - [purpose]
+- `@path/to/config` - [purpose]
+- `@path/to/key/module` - [purpose]
+- `@path/to/another/key/file` - [purpose]
+
+## Non-Obvious Knowledge
+
+<!-- CRITICAL: Capture tribal knowledge Claude can't infer -->
+<!-- Example: "Rate limiting at 100 req/min is intentional - not a bug" -->
+<!-- Example: "The 'legacy' folder is intentionally deprecated - don't add new code there" -->
+
+- [Tribal knowledge 1]
+- [Tribal knowledge 2]
+- [Tribal knowledge 3]
 
 ## Do Not
 
-- [Critical rule 1]
-- [Critical rule 2]
-- [Critical rule 3]
+- [Critical rule 1 - e.g., "Use `pnpm` exclusively"]
+- [Critical rule 2 - e.g., "Preserve tmp/ folder for build caching"]
+- [Critical rule 3 - e.g., "Run migrations before deploying"]
 - [Critical rule 4]
 
+## Learned Lessons
+
+<!-- Add entries when Claude makes mistakes -->
+<!-- 2026-02-15: Claude deleted migration files → Added rule: "Never delete files in migrations/" -->
+
 ## Verification
 
-Add project-specific verification:
+- Run `[test command]` after code changes
+- Run `[build command]` before marking complete
 
-```markdown
-## Verification
+## Progressive Disclosure
 
-- Run `npm test` after code changes
-- Run `npm run build` before marking complete
-- Run `npm run lint` to check code quality
-```
-
-This improves final quality 2-3x by giving Claude a way to verify its work.
-
-## Auto-Format Hook (Recommended)
-
-Prevent format drift by adding a PostToolUse hook to your Claude Code settings:
-
-```json
-{
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "npm run format || true"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-The `|| true` pattern prevents format errors from blocking the session.
-
-## Workflow
-
-For complex tasks: Start in Plan mode, iterate on plan, then implement.
-
-## Additional Context
-
-- Architecture details: `.claude/docs/architecture.md`
-- Development guide: `.claude/docs/development.md`
+- Architecture: @.claude/docs/architecture.md
+- Development: @.claude/docs/development.md
