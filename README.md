@@ -1,4 +1,4 @@
-# Project Context Creator
+# MD Context Builder
 
 A Claude Code skill that **guides human authoring** of CLAUDE.md files following research-backed best practices.
 
@@ -35,7 +35,7 @@ Clone this repository into your Claude Code skills directory:
 
 ```bash
 cd ~/.claude/skills
-git clone https://github.com/goncalovelosa/project-context-creator.git
+git clone https://github.com/goncalovelosa/md-context-builder.git
 ```
 
 ## Usage
@@ -73,7 +73,7 @@ Claude will:
 ## Structure
 
 ```
-project-context-creator/
+md-context-builder/
 ├── SKILL.md                    # Main skill definition
 ├── references/                 # Reference documentation
 │   ├── memory-hierarchy.md     # Claude memory hierarchy

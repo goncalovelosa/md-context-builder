@@ -1,9 +1,9 @@
 ---
-name: project-context-creator
+name: md-context-builder
 description: Guides creation of CLAUDE.md files and .claude/rules/ structure following progressive disclosure best practices. Use when user asks to 'create CLAUDE.md', 'generate CLAUDE.md', 'update CLAUDE.md', 'audit documentation', 'set up .claude/rules', or mentions CLAUDE.md, project documentation setup, or AI assistant context files.
 ---
 
-# Project Context Creator
+# MD Context Builder
 
 Guides human authoring of CLAUDE.md files and .claude/rules/ structure following progressive disclosure best practices.
 
