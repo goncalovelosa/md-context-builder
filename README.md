@@ -2,6 +2,19 @@
 
 A Claude Code skill that **guides human authoring** of CLAUDE.md files following research-backed best practices.
 
+## Quick Start
+
+```bash
+# Install
+cd ~/.claude/skills && git clone https://github.com/goncalovelosa/md-context-builder.git
+
+# Use - just ask Claude:
+# "Create a CLAUDE.md for this project"
+# "Audit my CLAUDE.md for best practices"
+```
+
+That's it. The skill will analyze your codebase, check for existing docs, and generate a draft for your review.
+
 ## Research-Backed Approach
 
 This skill incorporates findings from 2026 research:
