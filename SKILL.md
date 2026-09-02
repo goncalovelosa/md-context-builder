@@ -1,6 +1,6 @@
 ---
 name: md-context-builder
-description: Guides creation of CLAUDE.md files and .claude/rules/ structure following progressive disclosure best practices. Use when user asks to 'create CLAUDE.md', 'generate CLAUDE.md', 'update CLAUDE.md', 'audit documentation', 'set up .claude/rules', or mentions CLAUDE.md, project documentation setup, or AI assistant context files.
+description: Guides creation of CLAUDE.md and AGENTS.md context files and .claude/rules/ structure following progressive disclosure best practices, keeping one source of truth across Claude Code, Codex, Cursor and Copilot. Use when user asks to 'create CLAUDE.md', 'generate CLAUDE.md', 'update CLAUDE.md', 'audit documentation', 'set up .claude/rules', 'AGENTS.md and CLAUDE.md', 'keep agent instructions in sync', or mentions CLAUDE.md, AGENTS.md, project documentation setup, or AI assistant context files.
 ---
 
 # MD Context Builder
@@ -12,6 +12,37 @@ Guides human authoring of CLAUDE.md files and .claude/rules/ structure following
 1. **New Project Setup** - Create CLAUDE.md for a codebase without AI context documentation
 2. **Documentation Audit** - Review existing CLAUDE.md against 2026 best practices and suggest improvements
 3. **Structure Migration** - Convert flat CLAUDE.md into progressive disclosure structure with .claude/rules/
+
+## Multi-Agent Repos: AGENTS.md Is the Source
+
+**Claude Code reads `CLAUDE.md`. It does NOT read `AGENTS.md`.** Cursor, Codex and Copilot read
+`AGENTS.md`. Two real files always diverge.
+
+**Rule: `AGENTS.md` is the source, `CLAUDE.md` is a pointer to it. Never two real files.**
+
+- **Symlink** — `ln -s AGENTS.md CLAUDE.md`. Zero duplication. No Claude-only content possible.
+- **Import** — `CLAUDE.md` containing `@AGENTS.md`, then a Claude-only section below. Needed on
+  Windows (symlinks require Administrator or Developer Mode).
+
+Not `/import`: it appends a **one-time copy**, which is the divergence you are preventing.
+
+🔴 **Check the ignore rules before writing the bridge.** Many developers globally ignore
+`CLAUDE.md` and `.claude/`, so the bridge silently works on their machine and exists for nobody
+else — not teammates, not CI agents, not git worktrees:
+
+```bash
+git check-ignore -v --no-index CLAUDE.md .claude/rules/x.md
+```
+
+Re-include with `!CLAUDE.md` in the repo `.gitignore` (repo rules beat the global file). A
+committed symlink is stored as git mode `120000`, not a copy.
+
+For path-scoped context in a multi-agent repo, prefer **nested `AGENTS.md` + a sibling `CLAUDE.md`
+symlink** over `.claude/rules/`: Claude loads a subdirectory `CLAUDE.md` on demand — the same lazy
+behaviour as a `paths:` rule — and every other agent gets it too. Keep `.claude/rules/` for
+Claude-only mechanics or when you need glob precision a directory boundary can't express.
+
+**Reference:** @references/agents-md-uniformity.md
 
 ## Quick Start
 
@@ -89,16 +120,22 @@ Not every project needs CLAUDE.md. Research shows 16 of 84 tasks had NEGATIVE im
 
 ## Analysis Workflow
 
-### 1. Check for Existing CLAUDE.md
+### 1. Check for Existing Context Files
 
 - If exists: Offer to update or regenerate
 - If not exists: Proceed with creation
 
 Also check for:
 
+- `AGENTS.md` (root and nested) — **check this first**; if it exists, it is the source
 - `.claude/rules/` directory (path-specific rules)
 - `.claude/CLAUDE.md` (alternative project memory location)
 - `CLAUDE.local.md` (local overrides)
+- Other agents' config: `.cursor/rules/`, `.cursorrules`, `.github/copilot-instructions.md`, `.codex/`
+
+**If `AGENTS.md` exists and `CLAUDE.md` does not, Claude Code loads nothing.** That one-line bridge
+is the highest-value fix in the whole workflow — do it before anything else. See
+@references/agents-md-uniformity.md.
 
 ### 2. Determine Project Size
 
@@ -384,6 +421,10 @@ Simple web application.
 | Root CLAUDE.md  | < 2,500 tokens | Loads on every conversation  |
 | Reference files | < 5,000 words  | Progressive disclosure limit |
 
+The official ceiling is 200 lines per CLAUDE.md; this skill targets 30-60 because focused content
+measurably outperforms. Imports do **not** reduce context — imported files load at launch too.
+Only path-scoped rules and nested files load lazily.
+
 **Rule:** Every line must earn its place. If removing it wouldn't cause mistakes, delete it.
 
 ## Cost Impact Warning
@@ -405,7 +446,32 @@ Every line in CLAUDE.md:
 
 **Rule:** If a line doesn't prevent a specific mistake, remove it.
 
+## Built-In Tooling to Check First
+
+Claude Code ships commands that overlap parts of this workflow. Use them, then audit the result.
+
+| Command | What it does | Where this skill still adds value |
+| --- | --- | --- |
+| `/init` | Generates a starting CLAUDE.md; suggests improvements if one exists | Redundancy check, decision tree, progressive-disclosure migration |
+| `CLAUDE_CODE_NEW_INIT=1 /init` | Interactive multi-phase flow; also reads `AGENTS.md`, `.clinerules`, `.windsurf/rules/`, `.devin/rules/` | Bridging instead of copying — `/init` produces a snapshot, not a source of truth |
+| `/doctor` | Proposes trims for a checked-in CLAUDE.md | Deciding what replaces the trimmed content |
+| `/memory` | Lists and edits memory files; toggles auto memory | — |
+| `/context` | Shows which memory files actually loaded | **Use to verify every bridge you write** |
+
+**Auto memory** (`~/.claude/projects/<project>/memory/`) is written by Claude, is machine-local and
+is shared across worktrees of the same repo. It is not a substitute for CLAUDE.md and does not
+travel with the repo — do not move team rules into it.
+
+In a monorepo where ancestor CLAUDE.md files leak in, `claudeMdExcludes` in
+`.claude/settings.local.json` skips them by glob.
+
 ## Best Practices Checklist
+
+### One Source of Truth
+
+- [ ] If `AGENTS.md` exists, `CLAUDE.md` is a symlink or a `@AGENTS.md` import — never a second real file
+- [ ] The bridge is not gitignored (`git check-ignore -v --no-index CLAUDE.md`)
+- [ ] `/context` shows `CLAUDE.md` under **Memory files**
 
 ### Root CLAUDE.md
 
@@ -493,6 +559,16 @@ Every line in CLAUDE.md:
 3. Replace with `@path` import syntax
 4. Keep only universally applicable information in root
 
+### Error: "Claude ignores my AGENTS.md"
+
+**Cause:** Claude Code does not read `AGENTS.md`. Without a `CLAUDE.md` bridge it loads nothing.
+
+**Solution:**
+
+1. `ln -s AGENTS.md CLAUDE.md`, or write `CLAUDE.md` containing `@AGENTS.md`
+2. Run `git check-ignore -v --no-index CLAUDE.md` — if ignored, add `!CLAUDE.md` to the repo `.gitignore`
+3. Confirm with `/context` that `CLAUDE.md` appears under **Memory files**
+
 ### Error: "Claude ignores my CLAUDE.md rules"
 
 **Cause:** Information Claude can figure out from reading code, or conflicting instructions
@@ -558,6 +634,7 @@ This "revert → re-run → verify" pattern ensures documentation actually helps
 
 ### Reference Files
 
+- **AGENTS.md Uniformity:** @references/agents-md-uniformity.md
 - **Memory Hierarchy:** @references/memory-hierarchy.md
 - **Import Syntax:** @references/import-syntax.md
 - **Path-Specific Rules:** @references/path-specific-rules.md
@@ -588,6 +665,7 @@ This "revert → re-run → verify" pattern ensures documentation actually helps
 
 ### Key Principles
 
+0. **One source of truth** - `AGENTS.md` is the source; `CLAUDE.md` points to it
 1. **Less is more** - Target < 60 lines for root CLAUDE.md
 2. **Progressive disclosure** - Detail in reference files, not root
 3. **Import over copy** - Use `@path` syntax for references

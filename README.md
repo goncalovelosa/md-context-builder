@@ -23,6 +23,7 @@ This skill incorporates findings from 2026 research:
 |--------|-------------|-------------|
 | [SkillsBench](https://arxiv.org/pdf/2602.12670) | Curated Skills: +16.2pp improvement | Focus on procedural knowledge |
 | [Evaluating AGENTS.md](https://arxiv.org/pdf/2602.11988) | LLM-generated: -3%, Human-written: +4% | Guide humans, don't auto-generate |
+| Claude Code memory docs (2026-09) | Claude Code reads `CLAUDE.md`, never `AGENTS.md` | One source of truth: `AGENTS.md` + a `CLAUDE.md` bridge |
 | [Hacker News Discussion](https://news.ycombinator.com/item?id=47034087) | "4% improvement is massive!" | Even small gains matter |
 
 **Core insight:** LLM-generated context files hurt performance. This skill generates drafts for human review, not final content.
