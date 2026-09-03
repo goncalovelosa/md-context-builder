@@ -90,6 +90,7 @@ Claude will:
 md-context-builder/
 ├── SKILL.md                    # Main skill definition
 ├── references/                 # Reference documentation
+│   ├── agents-md-uniformity.md # AGENTS.md as the single source
 │   ├── memory-hierarchy.md     # Claude memory hierarchy
 │   ├── import-syntax.md        # @path syntax guide
 │   ├── path-specific-rules.md  # YAML frontmatter patterns
@@ -107,11 +108,12 @@ md-context-builder/
 
 ## Key Principles
 
-1. **Less is more** - Target < 60 lines (prefer 30-40)
-2. **Procedural > Declarative** - Focus on HOW, not WHAT
-3. **Non-obvious only** - What Claude can't infer from code
-4. **Human-written > LLM-generated** - Guide, don't replace
-5. **Failure-driven** - Add rules when Claude makes mistakes
+1. **One source of truth** - `AGENTS.md` is the source; `CLAUDE.md` points to it
+2. **Less is more** - Target < 60 lines (prefer 30-40)
+3. **Procedural > Declarative** - Focus on HOW, not WHAT
+4. **Non-obvious only** - What Claude can't infer from code
+5. **Human-written > LLM-generated** - Guide, don't replace
+6. **Failure-driven** - Add rules when Claude makes mistakes
 
 ## When to Skip CLAUDE.md
 
