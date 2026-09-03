@@ -4,10 +4,17 @@ Commands for analyzing git history to identify important files and patterns duri
 
 ## Timestamp Extraction
 
+The stamp lives in whichever file is the **source**. On a repo using the AGENTS.md bridge that is
+`AGENTS.md`, and `CLAUDE.md` is a one-line `@AGENTS.md` import with no stamp in it — grepping
+`CLAUDE.md` there silently returns nothing and every run re-reports the same 90 days as new.
+
 ```bash
-# Extract last update timestamp for incremental updates
-LAST_UPDATE=$(grep "CLAUDE.md Last Updated:" CLAUDE.md 2>/dev/null | sed 's/.*: //')
+# Resolve the source file first: AGENTS.md if it exists, else CLAUDE.md
+CTX=$([ -f AGENTS.md ] && echo AGENTS.md || echo CLAUDE.md)
+LAST_UPDATE=$(grep -m1 "Last Updated:" "$CTX" 2>/dev/null | sed 's/.*Last Updated: *//;s/ *-->.*//')
 ```
+
+A symlinked `CLAUDE.md` would have worked either way; the import bridge is the case that breaks.
 
 ## Recent Activity Analysis
 

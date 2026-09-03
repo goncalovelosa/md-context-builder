@@ -78,5 +78,3 @@ This document provides guidance for development workflows.
 
 - **Linter:** [name] - config at `[config path]`
 - **Formatter:** [name] - config at `[config path]`
-
-**Note:** Always run linter/formatter before committing. Do not manually fix style issues - let the tools handle it.

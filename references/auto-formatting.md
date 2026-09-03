@@ -2,6 +2,10 @@
 
 Prevent format drift by adding a PostToolUse hook for automatic formatting.
 
+**When this skill reaches for it:** when the audit finds a `CLAUDE.md` prescribing style rules that
+a formatter already enforces. Delete the rules, add the hook — a hook runs regardless of what
+Claude decides, an instruction does not.
+
 ## Configuration
 
 Add to your Claude Code settings:
@@ -11,7 +15,7 @@ Add to your Claude Code settings:
   "hooks": {
     "PostToolUse": [
       {
-        "matcher": "Write|Edit",
+        "matcher": "Write|Edit|MultiEdit",
         "hooks": [
           {
             "type": "command",
@@ -41,8 +45,9 @@ The `|| true` pattern prevents format errors from blocking the session. If the f
 // For npm projects
 "command": "npm run format || true"
 
-// For projects with lint --fix
-"command": "npm run lint --fix || true"
+// For projects with lint --fix — note the bare `--`, without it
+// npm eats the flag instead of passing it to the script
+"command": "npm run lint -- --fix || true"
 
 // For Python projects
 "command": "black . || true"

@@ -225,11 +225,15 @@ either way. See @references/agents-md-uniformity.md.
 
 **Target:** 30-40 lines maximum (research shows focused content outperforms)
 
-**Timestamp Comment:** Add at the very top:
+**Timestamp Comment:** Add at the very top of the **source** file — `AGENTS.md` where the bridge
+is in use, `CLAUDE.md` otherwise. Keep the label file-agnostic, because the same content moves:
 
 ```markdown
-<!-- CLAUDE.md Last Updated: 2026-02-18T12:00:00Z -->
+<!-- Context file last updated: 2026-02-18T12:00:00Z -->
 ```
+
+Claude Code strips block HTML comments before loading, so this costs it nothing. Other agents
+reading `AGENTS.md` may not strip it — one line is the right price, a paragraph is not.
 
 Required sections (procedural-first order):
 
@@ -466,7 +470,7 @@ In a monorepo where ancestor CLAUDE.md files leak in, `claudeMdExcludes` in
 
 ### Root CLAUDE.md
 
-- [ ] Line count < 60 lines
+- [ ] Under 60 lines of content — blank lines and HTML comments don't count (Claude Code strips comments before loading)
 - [ ] "Do Not" section present
 - [ ] Package manager marked **IMPORTANT**
 - [ ] File references use `@path` format

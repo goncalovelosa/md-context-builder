@@ -1,77 +1,91 @@
 # Memory Hierarchy Reference
 
-Claude Code supports multiple memory types in a hierarchical structure. Understanding this hierarchy is critical for effective CLAUDE.md generation.
+Claude Code has **two** memory systems, both loaded at the start of every session:
 
-## Memory Types Table
+- **CLAUDE.md files** — instructions you write.
+- **Auto memory** — notes Claude writes itself from your corrections.
 
-| Memory Type        | Location                                                                    | Purpose                                             | Use Case Examples                                    | Shared With                 |
-| ------------------ | --------------------------------------------------------------------------- | --------------------------------------------------- | ---------------------------------------------------- | --------------------------- |
-| **Managed policy** | `/Library/Application Support/ClaudeCode/CLAUDE.md` (macOS)                | Organization-wide instructions managed by IT/DevOps | Company coding standards, security policies          | All users in organization   |
-| **Managed policy** | `/etc/claude-code/CLAUDE.md` (Linux)                                        | Organization-wide instructions managed by IT/DevOps | Company coding standards, security policies          | All users in organization   |
-| **Managed policy** | `C:\Program Files\ClaudeCode\CLAUDE.md` (Windows)                         | Organization-wide instructions managed by IT/DevOps | Company coding standards, security policies          | All users in organization   |
-| **Project memory** | `./CLAUDE.md` or `./.claude/CLAUDE.md`                                       | Team-shared instructions for the project            | Project architecture, coding standards, workflows    | Team members via source control |
-| **Project rules**  | `./.claude/rules/*.md`                                                      | Modular, topic-specific project instructions        | Language-specific guidelines, testing conventions    | Team members via source control |
-| **User memory**    | `~/.claude/CLAUDE.md`                                                       | Personal preferences for all projects               | Code styling preferences, personal tooling shortcuts | Just you (all projects)       |
-| **Project local**  | `./CLAUDE.local.md`                                                         | Personal project-specific preferences               | Your sandbox URLs, preferred test data              | Just you (current project)    |
+This skill is about the first. Know the second exists so you don't move team rules into it: auto
+memory is machine-local and does not travel with the repo.
 
-## Key Principles
+## Where CLAUDE.md files live
 
-**Precedence:** Files higher in the hierarchy take precedence and are loaded first, providing a foundation that more specific memories build upon.
+Listed in **load order**, broadest first.
 
-## Advanced Features
+| Scope                | Location                                                                                                 | Shared with                   |
+| -------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| **Managed policy**   | macOS `/Library/Application Support/ClaudeCode/CLAUDE.md` · Linux/WSL `/etc/claude-code/CLAUDE.md` · Windows `C:\Program Files\ClaudeCode\CLAUDE.md` | Everyone in the organization |
+| **User**             | `~/.claude/CLAUDE.md`, `~/.claude/rules/`                                                                 | Just you, every project       |
+| **Project**          | `./CLAUDE.md` or `./.claude/CLAUDE.md`, `./.claude/rules/`                                                | The team, via source control  |
+| **Project local**    | `./CLAUDE.local.md`                                                                                       | Just you, this project        |
 
-### Symlink Support
+## They concatenate — nothing overrides anything
 
-The `.claude/rules/` directory supports symlinks for sharing common rules across projects:
+This is the part people get backwards. Every discovered file is **appended into context**, ordered
+from the filesystem root down to your working directory, so **instructions closer to where you
+launched Claude are read last**. Within a directory, `CLAUDE.local.md` comes after `CLAUDE.md`.
+
+There is no precedence mechanism and no override. Two files that contradict each other produce a
+contradiction, and Claude may pick either one — which is why the skill's redundancy check matters
+more than any ordering rule. Managed policy is the one exception: it cannot be excluded.
+
+Run `/context` to see which files actually loaded. Run `/memory` to open and edit them.
+
+## Discovery
+
+- Every directory from the working directory upward is read at launch.
+- `CLAUDE.md` in **subdirectories** below the working directory loads **on demand**, when Claude
+  reads a file in that directory. This is the lazy-loading lever, along with `paths:` rules.
+- `--add-dir` directories do **not** contribute memory files unless
+  `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` is set.
+
+## Size
+
+Guidance is **under 200 lines** per file; this skill targets 30-60. The only hard limit is **4
+MiB**, above which Claude Code skips the file entirely. Imports load at launch and therefore do
+**not** reduce context — only lazy-loaded files do.
+
+## Rules directories
+
+`.claude/rules/*.md` load with the same priority as `.claude/CLAUDE.md`. Files carrying `paths:`
+frontmatter load only when Claude reads a matching file. Both project and user rules directories
+support symlinks:
 
 ```bash
-# Symlink a shared rules directory
 ln -s ~/shared-claude-rules .claude/rules/shared
-
-# Symlink individual rule files
 ln -s ~/company-standards/security.md .claude/rules/security.md
 ```
 
-### User-Level Rules
+User rules (`~/.claude/rules/`) load before project rules.
 
-Create personal rules that apply to all your projects in `~/.claude/rules/`:
+See @references/path-specific-rules.md for the frontmatter, and
+@references/agents-md-uniformity.md for why nested `AGENTS.md` often beats `.claude/rules/` when
+more than one agent works the repo.
 
-```bash
-~/.claude/rules/
-├── preferences.md    # Your personal coding preferences
-└── workflows.md      # Your preferred workflows
+## Excluding files you don't want
+
+In a monorepo where other teams' files get picked up, `claudeMdExcludes` skips them by absolute-path
+glob. Put it in `.claude/settings.local.json` so the exclusion stays on your machine:
+
+```json
+{ "claudeMdExcludes": ["**/monorepo/CLAUDE.md", "/home/user/monorepo/other-team/.claude/rules/**"] }
 ```
 
-User-level rules are loaded before project rules, giving project rules higher priority.
+Managed policy files cannot be excluded.
 
-### Memory Discovery
+## Auto memory, in one paragraph
 
-Claude Code reads memories recursively:
+Claude writes it, not you. It lives in `~/.claude/projects/<project>/memory/` — a `MEMORY.md` index
+whose first 200 lines (or 25 KB) load every session, plus topic files Claude reads on demand. The
+project key comes from the git repository, so **all worktrees of one repo share it**. It is
+machine-local: not in the repo, not shared with the team, not on your other machines. Toggle it in
+`/memory` or with `autoMemoryEnabled`.
 
-- Starting in the current working directory (cwd)
-- Recurses up to (but not including) the root directory `/`
-- Reads any CLAUDE.md or CLAUDE.local.md files found
-- Also discovers CLAUDE.md nested in subtrees under cwd (loaded on-demand when working with files in those subtrees)
+## Commands
 
-### Organization-Level Memory
-
-Organizations can deploy centrally managed CLAUDE.md files:
-
-1. Create file at Managed policy location (see table above)
-2. Deploy via configuration management (MDM, Group Policy, Ansible)
-
-## Quick Reference Commands
-
-```bash
-# View loaded memory
-/memory
-
-# Initialize new CLAUDE.md
-/init
-
-# Edit memory files
-/memory
-
-# View current session context
-/context
-```
+| Command    | What it does                                            |
+| ---------- | ------------------------------------------------------- |
+| `/context` | Which memory files actually loaded — the only real check |
+| `/memory`  | List and edit memory files; toggle auto memory           |
+| `/init`    | Generate a starting CLAUDE.md                            |
+| `/doctor`  | Propose trims for a checked-in CLAUDE.md                 |

@@ -1,16 +1,16 @@
-# CLAUDE.md
+# [Project name]
 
-<!-- CLAUDE.md Last Updated: [DATE: e.g., 2026-02-10T22:00:00Z] -->
+<!-- Context file last updated: [DATE: e.g., 2026-02-10T22:00:00Z] -->
+<!-- If this repo uses AGENTS.md as the source, this content goes there and CLAUDE.md is the
+     bridge. @path imports below are Claude-only — in a shared AGENTS.md use markdown links.
+     Consider a nested AGENTS.md per package instead of growing this file. -->
 
-[One-line description - what this monorepo contains]
+[One line - what this monorepo contains]
 
 ## Package Manager
 
-**IMPORTANT:** Uses [yarn/npm/pnpm] workspaces (not [other package managers])
-
-## Monorepo Tool
-
-**[Nx/Turborepo/Lerna]** - Configured at `[config path]`
+**IMPORTANT:** Uses [yarn/npm/pnpm] workspaces (not [other package managers]).
+Monorepo tool: **[Nx/Turborepo/Lerna]** at `[config path]`.
 
 ## Common Workflows
 
@@ -19,27 +19,19 @@
 1. `[install command]` - Install all dependencies
 2. `[dev command]` - Start development server(s)
 3. `[build command]` - Build all packages
-4. `[test command]` - Run all tests
-5. `[affected:test]` - Test only affected packages (faster)
+4. `[affected:test]` - Test only affected packages
 
-### [Workflow 1 - e.g., Adding a New Package]
+### [Workflow - e.g., Adding a New Package]
 
 1. [Step 1 - e.g., Run `nx g @nx/lib:my-lib`]
-2. [Step 2 - e.g., Add to appropriate tsconfig paths]
+2. [Step 2 - e.g., Add to tsconfig paths]
 3. [Step 3 - e.g., Update workspace config]
-
-### [Workflow 2 - e.g., Working on a Specific App]
-
-1. [Step 1 - e.g., `nx serve app-name`]
-2. [Step 2]
-3. [Step 3]
 
 ### Cross-Package Changes
 
-1. Make changes in dependency package
-2. Run `[build command]` for that package
-3. Test dependent packages with `[test command]`
-4. Update version only after all tests pass
+1. Change the dependency package, then `[build command]` it
+2. Test dependents with `[test command]`
+3. Version only after all tests pass
 
 ## Key Packages
 
@@ -49,42 +41,29 @@
 | [ui]    | `packages/[ui]`   | [component library] |
 | [app]   | `apps/[app]`      | [main application]  |
 
-## Key Files
-
-- `@path/to/root/config` - [monorepo configuration]
-- `@path/to/workspace/config` - [workspace settings]
-- `@path/to/shared/module` - [shared utilities]
-
 ## Non-Obvious Knowledge
 
-<!-- CRITICAL: Capture tribal knowledge Claude can't infer -->
-<!-- Example: "Package A must be built before Package B" -->
-<!-- Example: "The 'legacy' folder is intentionally deprecated" -->
-<!-- Example: "Feature flags control rollouts, not feature branches" -->
+<!-- Tribal knowledge Claude can't infer. e.g. "Package A must be built before Package B" ·
+     "Feature flags control rollouts, not feature branches" -->
 
 - [Tribal knowledge 1]
 - [Tribal knowledge 2]
 - [Tribal knowledge 3]
-- [Tribal knowledge 4]
 
 ## Do Not
 
 - [Critical rule 1 - e.g., "Use `pnpm` exclusively"]
 - [Critical rule 2 - e.g., "Build packages in dependency order"]
 - [Critical rule 3 - e.g., "Never skip `affected:test` before pushing"]
-- [Critical rule 4 - e.g., "Preserve tmp/ folder for build caching"]
-- [Critical rule 5]
-- [Critical rule 6]
+- [Critical rule 4]
 
 ## Learned Lessons
 
-<!-- Add entries when Claude makes mistakes -->
-<!-- 2026-02-15: Claude built packages in wrong order → Added explicit dependency order rule -->
+<!-- 2026-02-15: built packages in wrong order → added explicit dependency order rule -->
 
 ## Verification
 
-- Run `[affected:test]` after code changes
-- Run `[build command]` before marking complete
+- Run `[affected:test]` after code changes, `[build command]` before marking complete
 
 ## Progressive Disclosure
 

@@ -1,6 +1,8 @@
-# CLAUDE.md
+# [Project name]
 
-<!-- CLAUDE.md Last Updated: [DATE: e.g., 2026-02-10T22:00:00Z] -->
+<!-- Context file last updated: [DATE: e.g., 2026-02-10T22:00:00Z] -->
+<!-- If this repo uses AGENTS.md as the source, this content goes there and CLAUDE.md is the
+     bridge. Any @path import below is Claude-only. -->
 
 [One-line description - what this project does]
 
