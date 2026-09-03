@@ -50,9 +50,16 @@ checkouts. Check before writing it:
 git check-ignore -v --no-index CLAUDE.md .claude/rules/x.md
 ```
 
-No output and exit status 1 means nothing is ignored — that is the good case. A printed rule means
-the file will be silently uncommittable. `--no-index` matters: without it, a file that is already
-tracked is reported as clean even when a rule matches it.
+Read the output carefully — the command exits 0 whenever any pattern matches, including a negation:
+
+- **No output, exit 1** → nothing is ignored. Good case.
+- **A rule starting with `!`** (e.g. `.gitignore:86:!CLAUDE.md`) → your re-include is winning. Also
+  the good case, and the one that looks alarming.
+- **A plain rule** (e.g. `~/.gitignore_global:37:CLAUDE.md`) → the file is uncommittable. Fix it,
+  unless `git status` shows the file as modified rather than untracked, which means it is already
+  tracked and the rule no longer applies.
+
+`--no-index` matters: without it, a tracked file is reported as clean even when a rule matches it.
 
 Repo-level `.gitignore` takes precedence over the global file, so re-include explicitly:
 
