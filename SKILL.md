@@ -252,13 +252,14 @@ Required sections (procedural-first order):
 
 For medium projects:
 
-- `.claude/docs/architecture.md`
-- `.claude/docs/development.md`
+- `.claude/docs/architecture.md` — from `templates/architecture.md`
+- `.claude/docs/development.md` — from `templates/development.md`
 
 For large projects:
 
-- `.claude/docs/services/[service-name].md`
-- `.claude/rules/` with path-specific rules
+- `.claude/docs/services/[service-name].md` — from `templates/service-template.md`
+- `.claude/rules/` with path-specific rules (Claude-only; see @references/agents-md-uniformity.md
+  for the cross-agent alternative)
 
 ### 5. Use Import Syntax
 

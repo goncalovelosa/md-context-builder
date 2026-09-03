@@ -133,6 +133,22 @@ src/
 - Run tests before committing
 ```
 
+## Is It Even a Pattern?
+
+Before documenting a convention you spotted in the code, three checks:
+
+1. **Does it hold?** If a pattern has many exceptions, it is not a pattern — do not document it.
+2. **Does it matter?** Ask "what happens if someone doesn't follow this?"
+   - Nothing → don't document
+   - Confusion → consider documenting
+   - Breakage → document it as a **Do Not**
+3. **Is it ours?** Personal preferences, one-off occurrences, framework defaults and anything a
+   linter or formatter already enforces all fail this. So does the self-evident ("functions do
+   things").
+
+The root file is for context Claude does not already have. Project-specific and non-obvious, or it
+does not go in.
+
 ## Decision Framework
 
 ### Should I include X?
@@ -168,8 +184,6 @@ Ask these questions:
 - Non-standard architectures
 - Complex build/deployment pipelines
 - Projects with unusual conventions
-
-**Low Impact Projects:**
 
 **Low Impact Projects:**
 

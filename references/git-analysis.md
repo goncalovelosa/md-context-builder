@@ -35,11 +35,36 @@ git log --name-only --pretty=format: | sort | uniq -c | sort -rn | head -30
 For large projects, find files that frequently change together:
 
 ```bash
-git log --name-only --pretty=format:COMMIT_SEPARATOR --since="90 days ago" | \
-  awk '/COMMIT_SEPARATOR/ {if (count > 1) print prev; count=0; prev=""} \
-  NF {if ($0 != "COMMIT_SEPARATOR") {files[count++]=$0; prev=prev$0" "}}' | \
-  grep -v '^$' | sort | uniq -c | sort -rn | head -20
+git log --name-only --pretty=format: --since="90 days ago" | awk 'BEGIN { RS = "" } {
+  n = 0
+  for (i = 1; i <= NF; i++) f[++n] = $i
+  if (n < 2 || n > 20) next          # skip solo commits and sweeping refactors
+  for (i = 1; i < n; i++) for (j = i + 1; j <= n; j++)
+    print (f[i] < f[j] ? f[i] " + " f[j] : f[j] " + " f[i])
+  delete f
+}' | sort | uniq -c | sort -rn | head -20
 ```
+
+Paragraph mode (`RS = ""`) is what splits the stream into commits — `--pretty=format:` leaves a
+blank line between them. The pair is sorted before printing so `a + b` and `b + a` collapse into
+one count. Commits touching more than 20 files are skipped: a sweeping refactor would otherwise
+emit hundreds of meaningless pairs and dominate the ranking. Filenames containing spaces are split
+on whitespace and will produce garbage rows; rare enough to live with, obvious enough to spot.
+
+## Conditional Section Inclusion
+
+Only spend root-file lines on git-derived sections when there is enough history to mean anything:
+
+| Condition              | Include section                    |
+| ---------------------- | ---------------------------------- |
+| > 20 commits           | Recent Activity (small/medium)     |
+| > 100 commits          | Historical Hotspots (medium/large) |
+| > 200 commits          | File Coupling (large only)         |
+| Recent activity < 90d  | Active Development (all sizes)     |
+
+These sections are declarative and go stale on every commit. Prefer leaving them out of the root
+file entirely and regenerating them on demand; include them only when the repo is large enough that
+"which files move together" is genuinely non-obvious.
 
 ## Repository Health Indicators
 
