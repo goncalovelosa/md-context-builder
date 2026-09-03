@@ -17,7 +17,7 @@ See @README.md for project overview and @package.json for available npm commands
 
 - Both relative and absolute paths are allowed
 - Home directory imports: `@~/.claude/my-instructions.md`
-- Recursive imports up to 5 hops deep
+- Recursive imports up to 4 hops deep
 - **Not evaluated inside markdown code spans and code blocks**
 
 ```markdown

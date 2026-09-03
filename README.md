@@ -23,6 +23,7 @@ This skill incorporates findings from 2026 research:
 |--------|-------------|-------------|
 | [SkillsBench](https://arxiv.org/pdf/2602.12670) | Curated Skills: +16.2pp improvement | Focus on procedural knowledge |
 | [Evaluating AGENTS.md](https://arxiv.org/pdf/2602.11988) | LLM-generated: -3%, Human-written: +4% | Guide humans, don't auto-generate |
+| Claude Code memory docs (2026-09) | Claude Code reads `CLAUDE.md`, never `AGENTS.md` | One source of truth: `AGENTS.md` + a `CLAUDE.md` bridge |
 | [Hacker News Discussion](https://news.ycombinator.com/item?id=47034087) | "4% improvement is massive!" | Even small gains matter |
 
 **Core insight:** LLM-generated context files hurt performance. This skill generates drafts for human review, not final content.
@@ -89,6 +90,7 @@ Claude will:
 md-context-builder/
 ├── SKILL.md                    # Main skill definition
 ├── references/                 # Reference documentation
+│   ├── agents-md-uniformity.md # AGENTS.md as the single source
 │   ├── memory-hierarchy.md     # Claude memory hierarchy
 │   ├── import-syntax.md        # @path syntax guide
 │   ├── path-specific-rules.md  # YAML frontmatter patterns
@@ -106,11 +108,12 @@ md-context-builder/
 
 ## Key Principles
 
-1. **Less is more** - Target < 60 lines (prefer 30-40)
-2. **Procedural > Declarative** - Focus on HOW, not WHAT
-3. **Non-obvious only** - What Claude can't infer from code
-4. **Human-written > LLM-generated** - Guide, don't replace
-5. **Failure-driven** - Add rules when Claude makes mistakes
+1. **One source of truth** - `AGENTS.md` is the source; `CLAUDE.md` points to it
+2. **Less is more** - Target < 60 lines (prefer 30-40)
+3. **Procedural > Declarative** - Focus on HOW, not WHAT
+4. **Non-obvious only** - What Claude can't infer from code
+5. **Human-written > LLM-generated** - Guide, don't replace
+6. **Failure-driven** - Add rules when Claude makes mistakes
 
 ## When to Skip CLAUDE.md
 
