@@ -31,11 +31,11 @@ The skill will:
 5. **PROMPT HUMAN REVIEW** - Ask user to add tribal knowledge and verify content
 6. Set up path-specific rules with YAML frontmatter (if applicable)
 
-**Important:** Generated content is a STARTING POINT. Human review and addition of tribal knowledge is REQUIRED for effectiveness. Research shows LLM-generated content hurts (-3%) while human-written helps (+4%).
+**Important:** Generated content is a STARTING POINT. Human review and addition of tribal knowledge is REQUIRED for effectiveness. The measured finding is a relative one: developer-written context files outperform LLM-generated ones by ~7% (arxiv 2602.11988). Neither absolute effect was statistically significant.
 
 ## When to Skip CLAUDE.md - Decision Tree
 
-Not every project needs CLAUDE.md. Research shows 16 of 84 tasks had NEGATIVE impact from Skills.
+Not every project needs a context file. SkillsBench found roughly a fifth of tasks got *worse* with Skills attached — context is not free and not always positive.
 
 **Answer these questions:**
 
@@ -299,7 +299,7 @@ I've generated a CLAUDE.md draft. For it to be effective, please:
 
 3. Add any critical Do Not rules I might have missed
 
-Research shows human-written content (+4%) outperforms LLM-generated (-3%).
+Developer-written context files measurably outperform LLM-generated ones (arxiv 2602.11988) — that gap is the whole reason this skill drafts rather than decides.
 ```
 
 ## Content Quality Principles
@@ -428,12 +428,9 @@ Every line in CLAUDE.md:
 - Increases agent exploration and testing
 - May reduce task success if redundant
 
-**Guidelines:**
-
-- Ultra-minimal (15-20 lines): ~5% cost increase
-- Minimal (30-40 lines): ~10% cost increase
-- Standard (50-60 lines): ~15% cost increase
-- Comprehensive (100+ lines): 20%+ cost increase
+That 20% is measured for context files as a whole; the paper does **not** break cost down by file
+length, so there is no published per-size figure to quote. What follows from it is only the
+direction: a longer file costs more on every single conversation, forever.
 
 **Rule:** If a line doesn't prevent a specific mistake, remove it.
 
