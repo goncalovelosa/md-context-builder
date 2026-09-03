@@ -1,8 +1,10 @@
-# CLAUDE.md
+# [Project name]
 
-<!-- CLAUDE.md Last Updated: [DATE: e.g., 2026-02-10T22:00:00Z] -->
+<!-- Context file last updated: [DATE: e.g., 2026-02-10T22:00:00Z] -->
+<!-- If this repo uses AGENTS.md as the source, this content goes there and CLAUDE.md is the
+     bridge. @path imports below are Claude-only — in a shared AGENTS.md use markdown links. -->
 
-[One-line description - what this project does]
+[One line - what this project does]
 
 ## Package Manager
 
@@ -20,43 +22,33 @@
 ### [Project-Specific Workflow - e.g., Adding a Feature]
 
 1. [Step 1 - e.g., Create component in src/components/]
-2. [Step 2 - e.g., Add tests in **tests**/]
+2. [Step 2 - e.g., Add tests in `__tests__/`]
 3. [Step 3 - e.g., Update exports in index.ts]
-
-### [Another Workflow - e.g., Database Migrations]
-
-1. [Step 1]
-2. [Step 2]
-3. [Step 3]
 
 ## Key Files
 
 - `@path/to/entry` - [purpose]
 - `@path/to/config` - [purpose]
 - `@path/to/key/module` - [purpose]
-- `@path/to/another/key/file` - [purpose]
 
 ## Non-Obvious Knowledge
 
-<!-- CRITICAL: Capture tribal knowledge Claude can't infer -->
-<!-- Example: "Rate limiting at 100 req/min is intentional - not a bug" -->
-<!-- Example: "The 'legacy' folder is intentionally deprecated - don't add new code there" -->
+<!-- Tribal knowledge Claude can't infer. e.g. "Rate limiting at 100 req/min is intentional,
+     not a bug" · "The legacy/ folder is deprecated on purpose — don't add code there" -->
 
 - [Tribal knowledge 1]
 - [Tribal knowledge 2]
-- [Tribal knowledge 3]
 
 ## Do Not
 
 - [Critical rule 1 - e.g., "Use `pnpm` exclusively"]
-- [Critical rule 2 - e.g., "Preserve tmp/ folder for build caching"]
+- [Critical rule 2 - e.g., "Preserve tmp/ for build caching"]
 - [Critical rule 3 - e.g., "Run migrations before deploying"]
-- [Critical rule 4]
 
 ## Learned Lessons
 
-<!-- Add entries when Claude makes mistakes -->
-<!-- 2026-02-15: Claude deleted migration files → Added rule: "Never delete files in migrations/" -->
+<!-- Add an entry each time Claude gets something wrong.
+     2026-02-15: deleted migration files → rule: "Never delete files in migrations/" -->
 
 ## Verification
 

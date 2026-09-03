@@ -9,13 +9,9 @@ This document describes the [Service Name] service.
 ## Location
 
 - **Package:** `packages/[service-name]/` or `apps/[service-name]/`
-- **Entry point:** `[path]`
 
-## Tech Stack
-
-- [Framework/Technology]
-- [Language]
-- [Key dependencies]
+<!-- No Tech Stack or Entry point section: both are inferable from package.json and the code,
+     and this skill's own rules exclude them. -->
 
 ## Architecture
 
@@ -106,8 +102,6 @@ This document describes the [Service Name] service.
 - Relevant code: `[functionName]` ([path:line])
 
 ### [Task 2]
-
-[How to accomplish the task]
 
 [How to accomplish the task]
 
