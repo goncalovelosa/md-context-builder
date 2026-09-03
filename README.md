@@ -98,12 +98,14 @@ md-context-builder/
 │   ├── auto-formatting.md      # PostToolUse hooks
 │   ├── best-practices-2026.md  # 2026 community patterns
 │   └── effective-content.md    # Research-backed content examples
-├── analysis/                   # Analysis patterns
 └── templates/                  # Project size templates
     ├── ultra-minimal.md        # 15-20 lines, tools only
-    ├── small-project.md
-    ├── medium-project.md
-    └── large-monorepo.md
+    ├── small-project.md        # < 50 files
+    ├── medium-project.md       # 50-500 files
+    ├── large-monorepo.md       # 500+ files
+    ├── architecture.md         # .claude/docs/architecture.md
+    ├── development.md          # .claude/docs/development.md
+    └── service-template.md     # .claude/docs/services/<name>.md
 ```
 
 ## Key Principles
