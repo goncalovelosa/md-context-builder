@@ -2,16 +2,31 @@
 
 Modern patterns from 2026 community sources and research for CLAUDE.md generation.
 
-## Research-Backed Evidence Summary (2026)
+## Research-Backed Evidence Summary
 
-| Content Type                | Effect      | Source                                  |
-| --------------------------- | ----------- | --------------------------------------- |
-| Curated procedural Skills   | **+16.2pp** | SkillsBench (arxiv 2602.12670)          |
-| Human-written AGENTS.md     | **+4%**     | Evaluating AGENTS.md (arxiv 2602.11988) |
-| LLM-generated AGENTS.md     | **-3%**     | Evaluating AGENTS.md                    |
-| Comprehensive documentation | **-2.9pp**  | SkillsBench                             |
-| Focused (2-3 modules)       | **+18.6pp** | SkillsBench                             |
-| Detailed/compact Skills     | **+18.8pp** | SkillsBench                             |
+**Citations verified: 2026-09-03** against arxiv 2602.11988 **v2** and 2602.12670 **v4**. Both
+papers were substantially revised in June 2026; anything quoted here from an earlier version is
+marked. Re-check before quoting these figures elsewhere.
+
+| Content type                          | Effect                    | Source |
+| ------------------------------------- | ------------------------- | ------ |
+| Developer-written vs LLM-generated    | **+7% relative, p=0.038** | Evaluating AGENTS.md v2 (arxiv 2602.11988) |
+| Developer-written, absolute           | +2.4% (p=0.21, **n.s.**)  | Evaluating AGENTS.md v2 |
+| LLM-generated, absolute               | −0.5% / −2% (p=0.87 / 0.37, **n.s.**) | Evaluating AGENTS.md v2 |
+| Context files, inference cost         | **> +20%**                | Evaluating AGENTS.md |
+| LLM files where they are the ONLY docs| **+2.7%**                 | Evaluating AGENTS.md |
+| Curated procedural Skills             | **+16.6pp**               | SkillsBench v4 (arxiv 2602.12670) |
+| Comprehensive Skills                  | **−2.9pp**                | SkillsBench |
+| Focused (2-3 modules)                 | **+18.6pp**               | SkillsBench |
+| Self-generated Skills                 | **−1.3pp**                | SkillsBench |
+
+**Read the significance column.** The absolute effects are not statistically significant, and the
+paper notes no single repository showed a significant effect. The one solid finding is the
+**relative** gap: developer-written context files beat LLM-generated ones. That is what justifies a
+skill that guides a human instead of generating for them — not a claimed +4%.
+
+⚠️ Earlier versions of this skill quoted **+4% / −3%**. Those are **v1** figures; v2 (2026-06-23)
+removed them. SkillsBench's "16 of 84 tasks" is likewise v1/v2 — **v4 is 87 tasks**.
 
 ### Key Research Findings
 
@@ -19,7 +34,8 @@ Modern patterns from 2026 community sources and research for CLAUDE.md generatio
 
 - 2-3 Skills/modules are OPTIMAL; 4+ show diminishing returns
 - Models CANNOT self-author procedural knowledge (-1.3pp)
-- 16 of 84 tasks show NEGATIVE deltas with Skills (not universally helpful)
+- Skills are not universally helpful — a fifth of tasks showed negative deltas (16 of 84 in v1;
+  v4 re-ran on 87 tasks)
 
 **From Evaluating AGENTS.md (arxiv 2602.11988):**
 
@@ -29,7 +45,8 @@ Modern patterns from 2026 community sources and research for CLAUDE.md generatio
 
 **From Hacker News Practitioners (id=47034087):**
 
-- "4% improvement is massive!" - even small gains are worthwhile
+- Practitioners read even a few points as worth it — *"4% is yuuuge. In hard projects, 1% is the
+  difference…"*, *"4% improvement from a simple markdown file means it's a must-have."*
 - Best use case: domain knowledge model is NOT aware of
 - "Is this intentional?" type questions are most valuable
 - Add rules ONLY when agent has failed at a task
@@ -37,7 +54,7 @@ Modern patterns from 2026 community sources and research for CLAUDE.md generatio
 
 ## Procedural vs Declarative Knowledge
 
-**Procedural (HOW)** - Outperforms declarative by 4x
+**Procedural (HOW)** — this skill's strong preference, and consistent with SkillsBench's finding that focused procedural Skills outperform comprehensive documentation. No published ratio quantifies it; treat "procedural beats declarative" as a direction, not a multiplier.
 
 ```markdown
 ## Adding API Endpoints
@@ -139,11 +156,14 @@ Before implementing:
 
 Structure documentation in three tiers:
 
-| Tier       | Content                           | Location            |
-| ---------- | --------------------------------- | ------------------- |
-| **Tier 1** | Universal context - always loaded | Root CLAUDE.md      |
-| **Tier 2** | Domain-specific context           | .claude/docs/\*.md  |
-| **Tier 3** | Task-specific context             | .claude/rules/\*.md |
+| Tier       | Content                           | Location                        |
+| ---------- | --------------------------------- | ------------------------------- |
+| **Tier 1** | Universal context - always loaded | Root `CLAUDE.md`                |
+| **Tier 2** | Invoked expertise                 | `.claude/skills/<name>/SKILL.md`|
+| **Tier 3** | Deep reference, read on demand    | `docs/agent-guides/<name>.md`   |
+
+Those are Groff's tiers as published. This skill puts Tier 2/3 material in `.claude/docs/` and
+`.claude/rules/` instead — a deliberate divergence, not his recommendation.
 
 ## ALWAYS/NEVER Rule Format
 
@@ -165,9 +185,19 @@ Standardize rules using explicit ALWAYS/NEVER format:
 - Never skip error handling
 ```
 
-## Skill Safety Checklist (groff.dev)
+## Adopting Third-Party Skills Safely (groff.dev)
 
-Before implementing changes:
+Before installing a skill someone else wrote:
+
+- [ ] Read the raw `SKILL.md` — all of it, not the README
+- [ ] Audit for exfiltration patterns and anything that phones home
+- [ ] Check it matches your conventions rather than fighting them
+- [ ] Restrict its permissions (`allowed-tools`) to what it actually needs
+- [ ] Remove skills that have gone stale
+
+## Change Impact Checklist
+
+Not from Groff — this skill's own. Before implementing a change:
 
 - [ ] Does this change affect security?
 - [ ] Does this change affect data integrity?
@@ -190,13 +220,10 @@ Organize automation in hierarchy:
 | Root CLAUDE.md      | < 2,500 tokens     | Loads on every conversation start |
 | Reference files     | < 5,000 words each | Progressive disclosure limit      |
 | Total documentation | < 15,000 tokens    | Prevent context rot               |
-| Metric              | Target             | Rationale                         |
-| --------            | --------           | -----------                       |
-| Root CLAUDE.md      | < 2,500 tokens     | Loads on every conversation start |
-| Reference files     | < 5,000 words each | Progressive disclosure limit      |
-| Total documentation | < 15,000 tokens    | Prevent context rot               |
 
-**Rule of thumb:** At 32,000 tokens, models drop below 50% accuracy on recall tasks.
+These targets are this skill's own convention, not measured findings. The one measured number here
+is the inference-cost one: context files cost over 20% more. Claude Code's own guidance is under
+200 lines per `CLAUDE.md`, with a hard 4 MiB skip.
 
 ## Progressive Disclosure Principle
 

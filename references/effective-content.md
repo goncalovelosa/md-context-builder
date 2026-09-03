@@ -4,14 +4,10 @@ Research-backed guidance on what content helps vs hurts in CLAUDE.md files.
 
 ## Evidence Summary
 
-| Content Type                | Effect  | Evidence Source                         |
-| --------------------------- | ------- | --------------------------------------- |
-| Curated procedural Skills   | +16.2pp | SkillsBench (arxiv 2602.12670)          |
-| Human-written AGENTS.md     | +4%     | Evaluating AGENTS.md (arxiv 2602.11988) |
-| LLM-generated AGENTS.md     | -3%     | Evaluating AGENTS.md                    |
-| Comprehensive documentation | -2.9pp  | SkillsBench                             |
-| Focused (2-3 modules)       | +18.6pp | SkillsBench                             |
-| Detailed/compact Skills     | +18.8pp | SkillsBench                             |
+All numbers, their significance and the version caveats live in one place:
+@references/best-practices-2026.md. The short version — the measured finding is **relative**
+(developer-written context files beat LLM-generated ones by ~7%), not the absolute +4% this skill
+used to quote.
 
 ## Good Content Examples
 
