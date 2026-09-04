@@ -445,7 +445,9 @@ Simple web application.
 Official guidance is under 200 lines per CLAUDE.md; this skill targets 30-60 because focused
 content measurably outperforms. The only hard limit is 4 MiB, above which the file is skipped
 entirely. Imports do **not** reduce context — imported files load at launch too. Path-scoped rules,
-nested files and skills are what load lazily.
+nested files and skills are what load lazily **for Claude Code**. Codex reads `AGENTS.md` from the
+git root down to its working directory and stops, so a nested file below that never loads for it —
+see @references/agents-md-uniformity.md before relying on a split to save context on a mixed repo.
 
 **Rule:** Every line must earn its place. If removing it wouldn't cause mistakes, delete it.
 
@@ -704,5 +706,6 @@ This "revert → re-run → verify" pattern ensures documentation actually helps
 2. **Less is more** - Target < 60 lines for the root context file
 3. **Progressive disclosure** - Detail in reference files, not root
 4. **Import over copy** - Use `@path` syntax, and markdown links where other agents must follow
-5. **Path-specific rules** - `.claude/rules/` for Claude, nested `AGENTS.md` when agents are mixed
+5. **Path-specific rules** - `.claude/rules/` for Claude, nested `AGENTS.md` when agents are mixed —
+   and repeat the damaging rules in the root file, because Codex will not descend to them
 6. **Verify and prune** - Remove what doesn't prevent mistakes
