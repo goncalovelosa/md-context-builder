@@ -119,19 +119,55 @@ That is the strongest argument for the import bridge on a repo with reference do
 
 Two mechanisms load context only when it is relevant:
 
-| Mechanism                                         | Granularity        | Read by                          | Committable            |
-| ------------------------------------------------- | ------------------ | -------------------------------- | ---------------------- |
-| `.claude/rules/` with `paths:`                    | glob               | Claude only                      | needs gitignore surgery |
-| Nested `AGENTS.md` + sibling `CLAUDE.md` symlink  | directory          | Claude, Cursor, Codex, Copilot   | yes, like any file      |
-
-Prefer nested `AGENTS.md` when more than one agent works the repo. Claude loads a `CLAUDE.md` in a
-subdirectory on demand, when it reads files in that directory — the same lazy behaviour as a
-`paths:` rule, and every other agent picks up the nested `AGENTS.md` too:
+| Mechanism                                        | Granularity | Read by                                   | Committable             |
+| ------------------------------------------------ | ----------- | ----------------------------------------- | ----------------------- |
+| `.claude/rules/` with `paths:`                   | glob        | Claude only                               | needs gitignore surgery |
+| Nested `AGENTS.md` + sibling `CLAUDE.md` symlink | directory   | Claude lazily; Codex only from its cwd up | yes, like any file      |
 
 ```text
 src/api/AGENTS.md
 src/api/CLAUDE.md -> AGENTS.md
 ```
+
+### The agents do not behave the same way
+
+**Claude Code** loads a subdirectory's `CLAUDE.md` on demand, when it reads files in that
+directory — the same lazy behaviour as a `paths:` rule. Every `CLAUDE.md` on the path from the repo
+root down to that file loads, not only the leaf.
+
+**Codex does not.** It reads `AGENTS.md` from the git root **down to the directory it was started
+in, and stops**, concatenating root-first. A deeper file never enters the prompt unless Codex was
+launched at or below it. Started at a repo root — which is where a worktree puts you — Codex sees
+the root file alone.
+
+> "Starting at the project root (typically the Git root), Codex walks down to your current working
+> directory." — [Codex docs](https://learn.chatgpt.com/docs/agent-configuration/agents-md)
+
+Confirmed in `codex-rs/core/src/agents_md.rs`: it walks up to the `.git` root, then back down to
+cwd inclusive — _"We do not walk past the project root."_
+
+**So a nested split is lazy for Claude Code and opt-in for Codex.** It is still the right mechanism
+on a mixed repo, but the root file then has to carry two things it would not otherwise need:
+
+1. **A map**, as ordinary markdown links, so Codex can open the folder file when it decides to.
+2. **The few rules that cost real damage if missed**, one line each. A rule that lives only three
+   directories down is a rule Codex will not have.
+
+Skipping step 2 makes the split a **regression** for Codex: before it, one flat file gave it
+everything.
+
+### Codex has a byte budget
+
+`project_doc_max_bytes` defaults to **32 KiB** for the whole concatenated chain, and Codex "stops
+adding files once the combined size reaches" it. Because it walks root-first, **the file dropped
+first is the deepest one** — the most specific rules, the ones that exist precisely because they are
+not obvious, and nothing is logged. Measure the deepest chain a contributor actually works in, not
+just the root file.
+
+### Cursor and Copilot
+
+Their nested-file discovery is **not verified here**. Do not assume it matches either behaviour
+above; check before relying on a nested file reaching them.
 
 The Windows and `core.symlinks` caveats apply to nested links as well; on a mixed team make each
 nested `CLAUDE.md` a one-line `@AGENTS.md` import instead.
