@@ -33,11 +33,40 @@ Run `/context` to see which files actually loaded. Run `/memory` to open and edi
 
 ## Discovery
 
-- Every directory from the working directory upward is read at launch.
+- Every directory from the working directory upward is read at launch — see **Ancestor files**
+  below for what that costs and how to get out of it.
 - `CLAUDE.md` in **subdirectories** below the working directory loads **on demand**, when Claude
   reads a file in that directory. This is the lazy-loading lever, along with `paths:` rules.
 - `--add-dir` directories do **not** contribute memory files unless
   `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1` is set.
+
+## Ancestor files — the case you can't see from inside
+
+A `CLAUDE.md` above your working directory loads at launch, for that project **and every other one
+beneath it**. Two things follow that don't apply to a project's own file:
+
+1. **It is invisible from inside the project.** Nothing in the repo mentions it; `/context` is the
+   only runtime view, so an audit has to walk the tree deliberately.
+2. **Its cost multiplies** — every project below it, in every session, for as long as it exists.
+
+Four exits, cheapest first:
+
+| Exit | When |
+| --- | --- |
+| **Start Claude lower** | The fastest lever, and it needs no edit: launched at the repo root, only the root's file loads; launched in `packages/api/`, that directory's file *and every ancestor* load. To focus on one package, start there. |
+| **Relocate** | The content applies to one project, not all of them. Move it down; that is where it was always cheapest. |
+| **Shrink** | It genuinely applies everywhere, but not all of it earns the multiplied cost. |
+| **`claudeMdExcludes`** | It is useful to a human but not to the agent one directory down — or it is another team's file and not yours to edit. |
+
+Splitting works too, with a caveat: a repo-root `.claude/rules/` with `paths:` is the documented
+answer for a monorepo root, and rules do load lazily. What a rule **cannot** do is reach upward —
+rules are per-project, so a rules directory never tames a file above the repo.
+
+⚠️ `claudeMdExcludes` in `.claude/settings.local.json` is machine-local and gitignored by design.
+It fixes the file for you and for nobody else — the same "does it travel" failure described in
+@references/agents-md-uniformity.md. Prefer the first three exits when the file is shared.
+
+Ask who reads it, too. A file addressed to a tool that never loads it is pure cost.
 
 ## Size
 
