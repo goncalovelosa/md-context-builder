@@ -115,9 +115,14 @@ Also check for:
 - `CLAUDE.local.md` (local overrides)
 - Other agents' config: `.cursor/rules/`, `.cursorrules`, `.github/copilot-instructions.md`, `.codex/`
 
-**If `AGENTS.md` exists and neither `CLAUDE.md` nor `.claude/CLAUDE.md` does, Claude Code loads
-none of this repo's instructions** (user and ancestor memory still load). The one-line bridge is
-the highest-value fix in the whole workflow — do it before anything else.
+**If `AGENTS.md` exists and the repo has no `CLAUDE.md`, no `.claude/CLAUDE.md` and no
+`.claude/rules/`, Claude Code loads none of this repo's instructions** (user and ancestor memory
+still load). The one-line bridge is the highest-value fix in the whole workflow — do it first.
+
+**Then look up.** From the directory Claude will be launched in, walk to the filesystem root and
+list every `CLAUDE.md` and `CLAUDE.local.md` on the way: they load at launch, ahead of this
+project's own file, and nothing inside the project reveals them. Budget them separately and treat
+them separately — @references/memory-hierarchy.md covers why and what the exits are.
 
 ### 2. Determine Project Size
 
@@ -192,7 +197,26 @@ For repositories with >20 commits, analyze recent activity.
 
 **Reference:** @references/git-analysis.md for comprehensive git analysis commands.
 
-### 7. Identify Linters/Formatters
+### 7. Verify the Claims Already in the File
+
+Nothing goes red when a context file rots, so **a false claim outlives a missing one** — and the
+reader has no reason to doubt it. Counting lines will not find this.
+
+Start with the timestamp comment: how stale the file is tells you how much of it to distrust. Then
+take every factual claim — a path, a line count, a file that exists or doesn't, a version, anything
+phrased "currently" — and check it against the repo:
+
+| Verdict | Action |
+| --- | --- |
+| **True** | Leave it, but see below |
+| **False** | Fix or delete now. This is the whole point of the step. |
+| **Unverifiable** | Mark it as unverified *in the file*. Unverified is information; a bare assertion is not. |
+
+Then treat the rot, not the symptom: a claim that needed verifying will need it again. Rewrite it
+durably, or delete it — the same argument the skill already makes for tech stack and structure,
+applied to any measured number.
+
+### 8. Identify Linters/Formatters
 
 Check for: `.eslintrc.*`, `.prettierrc.*`, `.pylintrc`, `ruff.toml`, `.golangci.yml`
 
@@ -321,6 +345,8 @@ Developer-written context files measurably outperform LLM-generated ones (arxiv 
 2. **Codebase overviews** - Research shows these don't help
 3. **Comprehensive documentation** - Focused content outperforms
 4. **Self-evident practices** - "Write clean code"
+5. **State** - if it changes when the work advances, it is not a rule: TODO lists, changelogs,
+   dated entries. See @references/effective-content.md
 
 ### Procedural > Declarative
 
@@ -410,10 +436,11 @@ Simple web application.
 
 ## Token Budget Targets
 
-| Metric          | Target         | Why                          |
-| --------------- | -------------- | ---------------------------- |
-| Root CLAUDE.md  | < 2,500 tokens | Loads on every conversation  |
-| Reference files | < 5,000 words  | Progressive disclosure limit |
+| Metric              | Target         | Why                                          |
+| ------------------- | -------------- | -------------------------------------------- |
+| Root CLAUDE.md      | < 2,500 tokens | Loads on every conversation                  |
+| **Ancestor file**   | tighter than a project file | Paid by every project below it, in every session |
+| Reference files     | < 5,000 words  | Progressive disclosure limit                 |
 
 Official guidance is under 200 lines per CLAUDE.md; this skill targets 30-60 because focused
 content measurably outperforms. The only hard limit is 4 MiB, above which the file is skipped
@@ -462,11 +489,17 @@ In a monorepo where ancestor CLAUDE.md files leak in, `claudeMdExcludes` in
 
 ## Best Practices Checklist
 
-### One Source of Truth
+### It Loads, and It Travels
+
+Two different verifications. The second is the one that fails silently.
 
 - [ ] If `AGENTS.md` exists, `CLAUDE.md` is a symlink or a `@AGENTS.md` import — never a second real file
-- [ ] The bridge is not gitignored (`git check-ignore -v --no-index CLAUDE.md`)
-- [ ] `/context`, **in a new session**, shows `CLAUDE.md` under **Memory files**
+- [ ] **Loads:** `/context`, in a new session, shows the file under **Memory files**
+- [ ] **Travels:** every context file is tracked — the root one, `.claude/CLAUDE.md`,
+      `.claude/rules/`, nested ones. See @references/agents-md-uniformity.md for how to check and
+      for the two ways this fails silently (global ignores, sparse worktrees)
+- [ ] Before recommending a large cut: the file is under version control, so there is an undo.
+      A workspace-root file often is not — say so instead of pretending the check passed
 
 ### Root CLAUDE.md
 
@@ -511,12 +544,15 @@ In a monorepo where ancestor CLAUDE.md files leak in, `claudeMdExcludes` in
 **Actions:**
 
 1. Read the existing context file, and check whether `AGENTS.md` and `CLAUDE.md` have diverged
-2. Check line count against 60-line target
-3. Verify token budget (< 2,500 tokens)
-4. Check for missing sections (Do Not, Progressive Disclosure)
-5. Validate @path syntax usage
-6. Identify opportunities for progressive disclosure
-7. Generate audit report with specific recommendations
+2. Walk up the tree — list what already loads before this file
+3. **Verify every factual claim against the repo** — true / false / unverifiable
+4. Flag state living in a rules file
+5. Check line count against 60-line target
+6. Verify token budget (< 2,500 tokens)
+7. Check for missing sections (Do Not, Progressive Disclosure)
+8. Validate @path syntax usage, and that the file is tracked
+9. Identify opportunities for progressive disclosure
+10. Generate audit report with specific recommendations
 
 **Result:** Audit report listing issues found and suggested improvements.
 
@@ -565,7 +601,7 @@ Only when Claude is the only agent on the repo — otherwise prefer nested `AGEN
 **Solution:**
 
 1. `ln -s AGENTS.md CLAUDE.md`, or write `CLAUDE.md` containing `@AGENTS.md`
-2. Run `git check-ignore -v --no-index CLAUDE.md` — if ignored, add `!CLAUDE.md` to the repo `.gitignore`
+2. Run `git check-ignore -v --no-index CLAUDE.md` — a plain rule means it is uncommittable, so add `!CLAUDE.md` to the repo `.gitignore`; a `!`-prefixed match is already the good case
 3. Start a new session and confirm with `/context` that `CLAUDE.md` appears under **Memory files**
 
 ### Error: "Claude ignores my CLAUDE.md rules"

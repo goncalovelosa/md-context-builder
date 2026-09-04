@@ -145,6 +145,28 @@ Before documenting a convention you spotted in the code, three checks:
 The root file is for context Claude does not already have. Project-specific and non-obvious, or it
 does not go in.
 
+## State Is Not a Rule
+
+The rule: **if it changes when the work advances, it does not belong in a context file.**
+
+| Belongs | Belongs elsewhere |
+| --- | --- |
+| "Use `pnpm` exclusively" | "- [ ] Migrate the remaining 3 packages to pnpm" |
+| "Rate limiting at 100 req/min is intentional" | "2026-02-15: raised the limit to 100" |
+| A lesson: what broke, and the rule it produced | A changelog of everything that changed |
+
+Tells to look for in an audit: checkbox lists · sections named *Pendentes* / *TODO* / *Next steps* /
+*Registo* / *Changelog* · dated entries in reverse-chronological order · anything carrying a status
+marker.
+
+Why it accumulates: a rules file has no mechanism that forces a TODO to close. Nothing goes red.
+So closed items stay, and they are paid on every session forever. One audit measured 80 of 407
+lines — a fifth of the file — in a document whose own first line said it held "only the binding
+rules".
+
+`Learned Lessons` is the deliberate exception. A lesson is a rule with an origin story, and it
+never closes.
+
 ## Decision Framework
 
 ### Should I include X?
